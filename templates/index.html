@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" type="image/png" href="static/favicon.png">
+  <title>Berrystream Dashboard | {{pth}}</title>
+    <style>
+        #videoStream {
+            position: absolte;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: block;
+            object-fit: fill;
+            background: black;
+            display: none;
+/*            z-index: -1; /* Place the video stream behind other elements */*/
+        }
+        button {
+            height: 25px;
+        }
+    </style>
+      <style>
+    body {
+      padding: 0px;
+      margin: 0px;
+    }
+    h1 {
+      border-bottom: ridge;
+      display: block;
+      font-size: 2em;
+      margin-block-start: 0.67em;
+      margin-block-end: 0.67em;
+      margin-inline-start: 0px;
+      margin-inline-end: 0px;
+      font-weight: bold;
+      unicode-bidi: isolate;
+      border-bottom: 1px solid #c0c0c0;
+      margin-bottom: 10px;
+      padding-bottom: 10px;
+      white-space: nowrap;
+    }
+    a.folder {
+        background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABt0lEQVR42oxStZoWQRCs2cXdHTLcHZ6EjAwnQWIkJyQlRt4Cd3d3d1n5d7q7ju1zv/q+mh6taQsk8fn29kPDRo87SDMQcNAUJgIQkBjdAoRKdXjm2mOH0AqS+PlkP8sfp0h93iu/PDji9s2FzSSJVg5ykZqWgfGRr9rAAAQiDFoB1OfyESZEB7iAI0lHwLREQBcQQKqo8p+gNUCguwCNAAUQAcFOb0NNGjT+BbUC2YsHZpWLhC6/m0chqIoM1LKbQIIBwlTQE1xAo9QDGDPYf6rkTpPc92gCUYVJAZjhyZltJ95f3zuvLYRGWWCUNkDL2333McBh4kaLlxg+aTmyL7c2xTjkN4Bt7oE3DBP/3SRz65R/bkmBRPGzcRNHYuzMjaj+fdnaFoJUEdTSXfaHbe7XNnMPyqryPcmfY+zURaAB7SHk9cXSH4fQ5rojgCAVIuqCNWgRhLYLhJB4k3iZfIPtnQiCpjAzeBIRXMA6emAqoEbQSoDdGxFUrxS1AYcpaNbBgyQBGJEOnYOeENKR/iAd1npusI4C75/c3539+nbUjOgZV5CkAU27df40lH+agUdIuA/EAgDmZnwZlhDc0wAAAABJRU5ErkJggg==) left top no-repeat;
+    }
+    a.file {
+        background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAIAAACQkWg2AAAABnRSTlMAAAAAAABupgeRAAABEElEQVR42nRRx3HDMBC846AHZ7sP54BmWAyrsP588qnwlhqw/k4v5ZwWxM1hzmGRgV1cYqrRarXoH2w2m6qqiqKIR6cPtzc3xMSML2Te7XZZlnW7Pe/91/dX47WRBHuA9oyGmRknzGDjab1ePzw8bLfb6WRalmW4ip9FDVpYSWZgOp12Oh3nXJ7nxoJSGEciteP9y+fH52q1euv38WosqA6T2gGOT44vry7BEQtJkMAMMpa6JagAMcUfWYa4hkkzAc7fFlSjwqCoOUYAF5RjHZPVCFBOtSBGfgUDji3c3jpibeEMQhIMh8NwshqyRsBJgvF4jMs/YlVR5KhgNpuBLzk0OcUiR3CMhcPaOzsZiAAA/AjmaB3WZIkAAAAASUVORK5CYII=) left top no-repeat;
+    }
+    a.icon {
+        padding-inline-start: 1.5em;
+        text-decoration: none;
+        user-select: auto;
+    }
+    user agent stylesheet
+    a:-webkit-any-link {
+        color: -webkit-link;
+        cursor: pointer;
+        text-decoration: underline;
+    }
+    table {
+        border-collapse: collapse;
+        text-indent: initial;
+        border-spacing: 2px;
+        width: 100%;
+    }
+    thead {
+        display: table-header-group;
+        vertical-align: middle;
+        unicode-bidi: isolate;
+        border-color: inherit;
+    }
+    th {
+      border: 1px solid #777;
+      border-top: transparent;
+    }
+    th:first-child {
+      border-left: transparent;
+    }
+    th:last-child {
+      border-right: transparent;
+    }
+    tr {
+      height: 1cm;
+    }
+    tbody > tr:focus {
+      background: rgba(164,219,232, 0.5);
+      border: 0.2px solid rgba(164,219,232, 1);
+    }
+    tbody > tr:nth-child(even) {
+      border-top: 0.5px dashed #ddd;
+    }
+    tbody > tr:hover {
+      background: rgba(164,219,232, 0.3);
+    }
+    td.detailsColumn {
+        padding-inline-start: 2em;
+        text-align: end;
+        white-space: nowrap;
+    }
+    td {
+        display: table-cell;
+        vertical-align: inherit;
+        unicode-bidi: isolate;
+    }
+    #parentDirLinkBox {
+        margin-bottom: 10px;
+        padding-bottom: 10px;
+    }
+    a {
+      text-decoration: none;
+      color: black;
+    }
+    a.up {
+        background: url() left top no-repeat;
+    }
+  </style>
+  <style>
+    * {
+        box-sizing: border-box;
+        outline: none;
+/*        user-select: none;*/
+    }
+
+  ::-webkit-scrollbar-thumb, ::-webkit-scrollbar-track, ::-webkit-scrollbar {
+    width: 0;
+    display: none;
+  }
+
+    body, html {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        overflow: hidden;
+        font-family: Arial, sans-serif;
+    }
+
+    .container {
+        display: flex;
+        height: 100%;
+        width: 100%;
+    }
+
+    .pane {
+        padding: 20px;
+        overflow: auto;
+        min-width: 35vw;
+    }
+
+    .pane-left {
+        background-color: #1A1A1A;
+        color: #efefef;
+        width: 50%;
+        padding: 8px;
+    }
+
+    .pane-right {
+        background-color: transparent;
+        width: 50%;
+        padding: 8px;
+    }
+
+    .divider {
+        width: 5px;
+        background: linear-gradient(90deg, silver, grey);
+        -webkit-box-shadow: 0px 0px 13px -1px rgba(0,0,0,0.75);
+        -moz-box-shadow: 0px 0px 13px -1px rgba(0,0,0,0.75);
+        box-shadow: 0px 0px 13px -1px rgba(0,0,0,0.75);
+        cursor: col-resize;
+    }
+
+    .divider, .pane-right {
+        user-select: none;
+    }
+
+    .pane-left::selection {
+      color: #1A1A1A;
+      background: #efefef;
+    }
+
+    .context-menu {
+  position: absolute;
+  display: none;
+  background-color: white;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 5px;
+  overflow: hidden;
+  z-index: 1000;
+}
+
+.context-menu ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.context-menu-item {
+  padding: 10px 20px;
+  cursor: pointer;
+}
+
+.context-menu-item:hover {
+  background-color: #eee;
+}
+  </style>
+</head>
+<body>
+<img id="videoStream" src="/vidfeed" alt="Video Stream">
+<div class="container">
+  <div class="pane pane-left">hhh</div>
+  <div class="divider">&nbsp;</div>
+  <div class="pane pane-right">
+    <h1>Index of {{pth}}</h1>
+    <div id="parentDirLinkBox" style="display: block;">
+      <button id="parentDirLink" class="icon up" onclick="function(){document.location += '../'}">
+        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAACM0lEQVR42myTA+w1RxRHz+zftmrbdlTbtq04qRGrCmvbDWp9tq3a7tPcub8mj9XZ3eHOGQdJAHw77/LbZuvnWy+c/CIAd+91CMf3bo+bgcBiBAGIZKXb19/zodsAkFT+3px+ssYfyHTQW5tr05dCOf3xN49KaVX9+2zy1dX4XMk+5JflN5MBPL30oVsvnvEyp+18Nt3ZAErQMSFOfelCFvw0HcUloDayljZkX+MmamTAMTe+d+ltZ+1wEaRAX/MAnkJdcujzZyErIiVSzCEvIiq4O83AG7LAkwsfIgAnbncag82jfPPdd9RQyhPkpNJvKJWQBKlYFmQA315n4YPNjwMAZYy0TgAweedLmLzTJSTLIxkWDaVCVfAbbiKjytgmm+EGpMBYW0WwwbZ7lL8anox/UxekaOW544HO0ANAshxuORT/RG5YSrjlwZ3lM955tlQqbtVMlWIhjwzkAVFB8Q9EAAA3AFJ+DR3DO/Pnd3NPi7H117rAzWjpEs8vfIqsGZpaweOfEAAFJKuM0v6kf2iC5pZ9+fmLSZfWBVaKfLLNOXj6lYY0V2lfyVCIsVzmcRV9Y0fx02eTaEwhl2PDrXcjFdYRAohQmS8QEFLCLKGYA0AeEakhCCFDXqxsE0AQACgAQp5w96o0lAXuNASeDKWIvADiHwigfBINpWKtAXJvCEKWgSJNbRvxf4SmrnKDpvZavePu1K/zu/due1X/6Nj90MBd/J2Cic7WjBp/jUdIuA8AUtd65M+PzXIAAAAASUVORK5CYII=" alt="up"> <span id="parentDirText">[parent directory]</span>
+      </button>
+    </div>
+    <table id="heirarchy">
+        <thead>
+          <tr class="header" id="theader">
+            <th id="nameColumnHeader" tabindex="0" role="button">Name</th>
+            <th id="sizeColumnHeader" class="detailsColumn" tabindex="0" role="button">
+              Size
+            </th>
+            <th id="dateColumnHeader" class="detailsColumn" tabindex="0" role="button">
+              Date modified
+            </th>
+            <th id="typeColumnHeader" class="detailsColumn" tabindex="0" role="button">
+              Type
+            </th>
+          </tr>
+      </thead>
+      <tbody>
+        {% for name in folders %}
+                <tr>
+                  <td><a class="icon folder" href="{{pth}}{{name}}">{{ name }}</a></td>
+                  <td class="detailsColumn" data-value="1845">1.8 kB</td>
+                  <td class="detailsColumn" data-value="1716834513">5/27/24, 11:58:33 PM</td>
+                  <td class="detailsColumn" data-value="1716834513">Folder</td>
+                </tr>
+            {% endfor %}
+            {% for name in files %}
+                <tr>
+                  <td><a class="icon file" href="{{pth}}{{name}}">{{ name }}</a></td>
+                  <td class="detailsColumn" data-value="1845">1.8 kB</td>
+                  <td class="detailsColumn" data-value="1716834513">5/27/24, 11:58:33 PM</td>
+                  <td class="detailsColumn" data-value="1716834513">File</td>
+                </tr>
+            {% endfor %}
+      </tbody>
+    </table>
+<div id="context-menu" class="context-menu">
+    <ul>
+      <li class="context-menu-item">New File</li>
+      <li class="context-menu-item">New Folder</li>
+      <li class="context-menu-item">Upload File / Folder</li>
+      <hr/>
+      <li class="context-menu-item">Cut</li>
+      <li class="context-menu-item">Copy</li>
+      <li class="context-menu-item">Paste</li>
+      <li class="context-menu-item">Delete</li>
+      <hr/>
+      <li class="context-menu-item" id="toggle">Toggle GUI</li>
+    </ul>
+</div>
+</div>
+
+    <script async>
+        const videoPlayer = document.getElementById("videoStream");
+
+        if ("documentPictureInPicture" in window) {
+          document.querySelector('#toggle').addEventListener("click", togglePictureInPicture, false);
+        }
+
+        async function togglePictureInPicture() {
+          // Early return if there's already a Picture-in-Picture window open
+          if (window.documentPictureInPicture.window) {
+            window.documentPictureInPicture.window.close();
+            return;
+          }
+
+          const pipWindow = await window.documentPictureInPicture.requestWindow({
+            width: 1366,
+            height: 768,
+          });
+
+          [...document.styleSheets].forEach((styleSheet) => {
+            try {
+              const cssRules = [...styleSheet.cssRules]
+                .map((rule) => rule.cssText)
+                .join("");
+              const style = document.createElement("style");
+
+              style.textContent = cssRules;
+              pipWindow.document.head.appendChild(style);
+            } catch (e) {
+              const link = document.createElement("link");
+
+              link.rel = "stylesheet";
+              link.type = styleSheet.type;
+              link.media = styleSheet.media;
+              link.href = styleSheet.href;
+              pipWindow.document.head.appendChild(link);
+            }
+          });
+
+          videoPlayer.style.display = 'block';
+          pipWindow.document.body.append(videoPlayer);
+        }
+
+          document.addEventListener('DOMContentLoaded', () => {
+          const contextMenu = document.getElementById('context-menu');
+          const container = document.querySelector('.container');
+
+          container.addEventListener('contextmenu', (e) => {
+            e.preventDefault();
+            const { clientX: mouseX, clientY: mouseY } = e;
+            contextMenu.style.top = `${mouseY}px`;
+            contextMenu.style.left = `${mouseX}px`;
+            contextMenu.style.display = 'block';
+          });
+
+          document.addEventListener('click', () => {
+            contextMenu.style.display = 'none';
+          });
+
+          contextMenu.addEventListener('click', (e) => {
+            e.stopPropagation();
+            // alert(`You clicked on ${e.target.textContent}`);
+            contextMenu.style.display = 'none';
+          });
+        });
+
+
+        documentPictureInPicture.addEventListener("enter", (event) => {
+          const pipWindow = event.window;
+        });
+
+    document.querySelector('#parentDirLink').addEventListener('click', function(){
+      window.location.replace(document.location+'/../')
+    })
+    const divider = document.querySelector('.divider');
+    const leftPane = document.querySelector('.pane-left');
+    const rightPane = document.querySelector('.pane-right');
+
+    let isResizing = false;
+
+    divider.addEventListener('mousedown', (e) => {
+        isResizing = true;
+        document.addEventListener('mousemove', onMouseMove);
+        document.addEventListener('mouseup', onMouseUp);
+    });
+
+    const onMouseMove = (e) => {
+        if (!isResizing) return;
+
+        const containerWidth = document.querySelector('.container').clientWidth;
+        const leftPaneWidth = e.clientX;
+        const rightPaneWidth = containerWidth - e.clientX - divider.clientWidth;
+
+        leftPane.style.width = `${leftPaneWidth}px`;
+        rightPane.style.width = `${rightPaneWidth}px`;
+    };
+
+    const onMouseUp = () => {
+        isResizing = false;
+        document.removeEventListener('mousemove', onMouseMove);
+        document.removeEventListener('mouseup', onMouseUp);
+    };
+
+        function getOS() {
+            const userAgent = window.navigator.userAgent;
+            const platform = window.navigator.platform;
+            const macosPlatforms = ['Macintosh', 'MacIntel', 'MacPPC', 'Mac68K'];
+            const windowsPlatforms = ['Win32', 'Win64', 'Windows', 'WinCE'];
+            const iosPlatforms = ['iPhone', 'iPad', 'iPod'];
+            let os = null;
+
+            if (macosPlatforms.indexOf(platform) !== -1) {
+                os = 'Mac OS';
+            } else if (iosPlatforms.indexOf(platform) !== -1) {
+                os = 'iOS';
+            } else if (windowsPlatforms.indexOf(platform) !== -1) {
+                os = 'Windows';
+            } else if (/Android/.test(userAgent)) {
+                os = 'Android';
+            } else if (!os && /Linux/.test(platform)) {
+                os = 'Linux';
+            }
+
+            return os;
+        }
+        document.addEventListener("DOMContentLoaded", function() {
+            var image = document.querySelector('#videoStream')
+            if (image.requestFullscreen) {
+                image.requestFullscreen();
+            } else if (image.webkitRequestFullscreen) { /* Safari */
+                image.webkitRequestFullscreen();
+            } else if (image.webkitRequestFullscreen) { /* IE11 */
+                image.webkitRequestFullscreen();
+            } else if (image.msRequestFullscreen) { /* IE11 */
+                image.msRequestFullscreen();
+            }
+            // alert(/iPhone|Android.+Mobile|Windows Phone/i.test(navigator.userAgent) && window.matchMedia("(max-width: 767px)").matches)
+            if (getOS() == 'Android'){
+                image.addEventListener('mousemove', function(event) {
+                    event.preventDefault();
+                    // var x = event.clientX/window.innerWidth;
+                    // var y = event.clientY/window.innerHeight;
+                    var rect = image.getBoundingClientRect();
+                    var x = (event.clientX-rect.left)/image.offsetWidth;
+                    var y = (event.clientY-rect.top)/image.offsetHeight;
+                    var fixture = 0;
+
+                    // Prepare the data to be sent
+                    var data = JSON.stringify({ x: x+fixture, y: y+fixture});
+
+                    // Create a new XMLHttpRequest object
+                    var xhr = new XMLHttpRequest();
+
+                    // Configure it: POST-request for the URL /log_coordinates
+                    xhr.open('POST', '/click?act=left', true);
+                    xhr.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
+
+                    // Send the request with the data
+                    xhr.send(data);
+                });
+                image.addEventListener('contextmenu', function(event) {
+                    event.preventDefault();
+                    // var x = event.clientX/window.innerWidth;
+                    // var y = event.clientY/window.innerHeight;
+                    var rect = image.getBoundingClientRect();
+                    var x = (event.clientX-rect.left)/image.offsetWidth;
+                    var y = (event.clientY-rect.top)/image.offsetHeight;
+                    var fixture = 0;
+
+                    // Prepare the data to be sent
+                    var data = JSON.stringify({ x: x+fixture, y: y+fixture});
+
+                    // Create a new XMLHttpRequest object
+                    var xhr = new XMLHttpRequest();
+
+                    // Configure it: POST-request for the URL /log_coordinates
+                    xhr.open('POST', '/click?act=right', true);
+                    xhr.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
+
+                    // Send the request with the data
+                    xhr.send(data);
+                });
+                image.addEventListener('touchmove', function(event) {
+                    event.preventDefault();
+                    var temp = temp || 0;
+                    var x = event.touches[0].clientX - temp
+
+                    // Prepare the data to be sent
+                    var data = JSON.stringify({ x: x});
+
+                    // Create a new XMLHttpRequest object
+                    var xhr = new XMLHttpRequest();
+
+                    // Configure it: POST-request for the URL /log_coordinates
+                    xhr.open('POST', '/scroll', true);
+                    xhr.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
+
+                    // Send the request with the data
+                    xhr.send(data);
+                });
+            } else {
+                image.addEventListener('click', function(event) {
+                    event.preventDefault();
+                    // var x = event.clientX/window.innerWidth;
+                    // var y = event.clientY/window.innerHeight;
+                    var rect = image.getBoundingClientRect();
+                    var x = (event.clientX-rect.left)/image.offsetWidth;
+                    var y = (event.clientY-rect.top)/image.offsetHeight;
+                    var fixture = 0;
+
+                    // Prepare the data to be sent
+                    var data = JSON.stringify({ x: x+fixture, y: y+fixture});
+
+                    // Create a new XMLHttpRequest object
+                    var xhr = new XMLHttpRequest();
+
+                    // Configure it: POST-request for the URL /log_coordinates
+                    xhr.open('POST', '/click?act=left', true);
+                    xhr.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
+
+                    // Send the request with the data
+                    xhr.send(data);
+                });
+                image.addEventListener('contextmenu', function(event) {
+                    event.preventDefault();
+                    // var x = event.clientX/window.innerWidth;
+                    // var y = event.clientY/window.innerHeight;
+                    var rect = image.getBoundingClientRect();
+                    var x = (event.clientX-rect.left)/image.offsetWidth;
+                    var y = (event.clientY-rect.top)/image.offsetHeight;
+                    var fixture = 0;
+
+                    // Prepare the data to be sent
+                    var data = JSON.stringify({ x: x+fixture, y: y+fixture});
+
+                    // Create a new XMLHttpRequest object
+                    var xhr = new XMLHttpRequest();
+
+                    // Configure it: POST-request for the URL /log_coordinates
+                    xhr.open('POST', '/click?act=right', true);
+                    xhr.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
+
+                    // Send the request with the data
+                    xhr.send(data);
+                });
+                image.addEventListener('wheel', function(event) {
+                    event.preventDefault();
+                    // var x = event.clientX/window.innerWidth;
+                    // var y = event.clientY/window.innerHeight;
+                    var rect = image.getBoundingClientRect();
+                    var x = (event.clientX-rect.left)/image.offsetWidth;
+                    var y = (event.clientY-rect.top)/image.offsetHeight;
+                    var fixture = 0;
+
+                    // Prepare the data to be sent
+                    var data = JSON.stringify({ x: x+fixture, y: y+fixture});
+
+                    // Create a new XMLHttpRequest object
+                    var xhr = new XMLHttpRequest();
+
+                    // Configure it: POST-request for the URL /log_coordinates
+                    xhr.open('POST', '/scroll', true);
+                    xhr.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
+
+                    // Send the request with the data
+                    xhr.send(data);
+                });
+            }
+        });
+    </script>
+</body>
+</html>
